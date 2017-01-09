@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root xmlns="http://www.nexacroplatform.com/platform/dataset">
+	<Parameters>
+		<Parameter id="gs_loginCrdNo">0000000000</Parameter>
+	</Parameters>
+	<Dataset id="dsInput1">
+		<ColumnInfo>
+			<Column id="srchDvCd" type="STRING" size="256"  />
+			<Column id="srchDvNm" type="STRING" size="256"  />
+			<Column id="hmpgPwdCphd" type="STRING" size="256"  />
+			<Column id="deviceKey" type="STRING" size="256"  />
+		</ColumnInfo>
+		<Rows>
+			<Row>
+				<Col id="srchDvCd">$login_type</Col>
+				<Col id="srchDvNm">$srt_id</Col>
+				<Col id="hmpgPwdCphd">$srt_pwd</Col>
+				<Col id="deviceKey">$_device</Col>
+			</Row>
+		</Rows>
+	</Dataset>
+	<Dataset id="__DS_PARAM_INFO__">
+		<ColumnInfo />
+		<Rows>
+		</Rows>
+	</Dataset>
+	<Dataset id="__DS_TRANS_INFO__">
+		<ColumnInfo>
+			<Column id="strSvcID" type="STRING" size="256"  />
+			<Column id="strURL" type="STRING" size="256"  />
+			<Column id="strInDatasets" type="STRING" size="256"  />
+			<Column id="strOutDatasets" type="STRING" size="256"  />
+			<Column id="strOS" type="STRING" size="256"  />
+			<Column id="strDeviceInfo" type="STRING" size="256"  />
+		</ColumnInfo>
+		<Rows>
+			<Row>
+				<Col id="strSvcID">login</Col>
+				<Col id="strURL">apb/selectListApb01080.do</Col>
+				<Col id="strInDatasets">dsInput1</Col>
+				<Col id="strOutDatasets">dsOutput0&#32;ds_outCmc</Col>
+				<Col id="strOS">$_device_OS</Col>
+				<Col id="strDeviceInfo">$_device_info</Col>
+			</Row>
+		</Rows>
+	</Dataset>
+	<Dataset id="gds_userInfo">
+		<ColumnInfo>
+			<Column id="CUST_MG_NO" type="STRING" size="256"  />
+			<Column id="MB_CRD_NO" type="STRING" size="256"  />
+			<Column id="CUST_NM" type="STRING" size="256"  />
+			<Column id="CUST_SRT_CD" type="STRING" size="256"  />
+			<Column id="CUST_CL_CD" type="STRING" size="256"  />
+			<Column id="BTDT" type="STRING" size="256"  />
+			<Column id="SEX_DV_CD" type="STRING" size="256"  />
+			<Column id="ABRD_RS_STN_CD" type="STRING" size="256"  />
+			<Column id="GOFF_RS_STN_CD" type="STRING" size="256"  />
+			<Column id="DSCP_YN" type="STRING" size="256"  />
+			<Column id="USR_PWD_CPHD" type="STRING" size="256"  />
+			<Column id="USER_DV" type="STRING" size="256"  />
+			<Column id="MBL_PHONE" type="STRING" size="256"  />
+			<Column id="USER_KEY" type="STRING" size="256"  />
+			<Column id="KR_JSESSIONID" type="STRING" size="256"  />
+			<Column id="SR_JSESSIONID" type="STRING" size="256"  />
+		</ColumnInfo>
+		<Rows>
+			<Row>
+			</Row>
+		</Rows>
+	</Dataset>
+	<Dataset id="gds_pageInfo">
+		<ColumnInfo>
+			<Column id="PAGE_LINE" type="STRING" size="256"  />
+			<Column id="CURR_PAGE" type="STRING" size="256"  />
+		</ColumnInfo>
+		<Rows>
+			<Row>
+				<Col id="PAGE_LINE" />
+				<Col id="CURR_PAGE" />
+			</Row>
+		</Rows>
+	</Dataset>
+</Root>
