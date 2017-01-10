@@ -53,16 +53,16 @@ class Srt(object):
         tree = ET.parse(os.path.join(os.getcwd(), 'src/login.xml'))
         response = request(tree.getroot(), url, data)
         
-        if find_elem(response, 'strResult').text == 'SUCC':
-            self.name = find_elem(response, 'CUST_NM').text
-            self.membership_number = find_elem(response, 'MB_CRD_NO').text
-            self.phone_number = find_elem(response, 'MBL_PHONE').text
+        if find_col_elem(response, 'strResult').text == 'SUCC':
+            self.name = find_col_elem(response, 'CUST_NM').text
+            self.membership_number = find_col_elem(response, 'MB_CRD_NO').text
+            self.phone_number = find_col_elem(response, 'MBL_PHONE').text
 
             self.logined = True
             return True
         else:
             self.logined = False
-            print(find_elem(root, 'MSG').text)
+            print(find_col_elem(root, 'MSG').text)
             return False
 
     def search(self, dep_stn_name, arr_stn_name, dep_date=None, dep_time=None, train_type='전체'):
@@ -92,6 +92,14 @@ class Srt(object):
         tree = ET.parse(os.path.join(os.getcwd(), 'src/search_without_login.xml'))
         response = request(tree.getroot(), url, data)
 
-        # need to update
-        # process response data by using Train object
-        return response
+        if find_col_elem(response, 'strResult').text == 'SUCC':
+            dataset = find_other_elem(response, 'Dataset[@id="dsOutput1"]', 1)
+            rows = find_other_elem(dataset, 'Row', 2)
+            trains = []
+            for row in rows:
+                train = Train(row)
+                trains.append(train)
+
+            return trains
+        else:
+            return False
