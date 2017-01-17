@@ -39,17 +39,12 @@ class Train(object):
         self.special_seat_str = find_col_elem(data, 'sprmRsvPsbStr').text
         self.general_seat_str = find_col_elem(data, 'gnrmRsvPsbStr').text
 
-    def __repr__(self):
+    def get_information(self):
         dep_date = "{}월{}일".format(self.dep_date[4:6], self.dep_date[6:])
         dep_time = "{}:{}".format(self.dep_time[:2], self.dep_time[2:4])
         arr_time = "{}:{}".format(self.arr_time[:2], self.arr_time[2:4])
 
-        message = ""
-        if self.special_seat_str != "-":
-            message += "특실 " + self.special_seat_str + " / "
-        message += "일반실 " + self.general_seat_str
-
-        repr_str = "[{} {}] {}, {}({})->{}({}) {}".format(
+        information = "[{} {}] {} {}({})->{}({})".format(
             self.train_name,
             self.train_no,
             dep_date,
@@ -57,10 +52,19 @@ class Train(object):
             dep_time,
             self.arr_stn_name,
             arr_time,
-            message
         )
 
-        return repr_str
+        return information
+
+    def __repr__(self):
+        repr_str = self.get_information()
+
+        message = " "
+        if self.special_seat_str != "-":
+            message += "특실 " + self.special_seat_str + " / "
+        message += "일반실 " + self.general_seat_str
+
+        return repr_str + message
 
     def has_special_seat(self):
         return "예약" in self.special_seat_str

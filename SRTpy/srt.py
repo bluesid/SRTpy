@@ -5,11 +5,13 @@ import os, re
 
 from train import *
 from tree import *
+from reservation import *
 
 SRT_HOST = 'https://app.srail.co.kr'
 SRT_LOGIN = '{}/apb/selectListApb01080.do'.format(SRT_HOST)
 SRT_LOGOUT = '{}/apb/selectListApb01081.do'.format(SRT_HOST)
 SRT_SEARCH = '{}/ara/selectListAra10007.do'.format(SRT_HOST)
+SRT_RESERVE = '{}/arc/selectListArc05013.do'.format(SRT_HOST)
 
 EMAIL_REGEX = re.compile(r"[^@]+@[^@]+\.[^@]+")
 PHONE_NUMBER_REGEX = re.compile(r"(\d{3})-(\d{3,4})-(\d{4})")
@@ -26,6 +28,7 @@ class Srt(object):
         self.logined = False
         if auto_login:
             self.login(srt_id, srt_pwd)
+        self.reserved = False
         
     def login(self, srt_id=None, srt_pwd=None):
         if srt_id is None:
@@ -54,9 +57,9 @@ class Srt(object):
         response = request(tree.getroot(), url, data)
         
         if find_col_elem(response, 'strResult').text == 'SUCC':
-            self.name = find_col_elem(response, 'CUST_NM').text
             self.membership_number = find_col_elem(response, 'MB_CRD_NO').text
-            self.phone_number = find_col_elem(response, 'MBL_PHONE').text
+            self.kr_session_id = find_col_elem(response, 'KR_JSESSIONID').text
+            self.sr_session_id = find_col_elem(response, 'SR_JSESSIONID').text
 
             self.logined = True
             return True
@@ -103,3 +106,49 @@ class Srt(object):
             return trains
         else:
             return False
+
+    def reserve(self, train):
+        
+        if not self.logined:
+            return "PLEASE LOG IN"
+        
+        elif train.train_name != 'SRT':
+            return "SRT만 예약 가능합니다."
+
+        else:
+            url = SRT_RESERVE 
+            data = {
+                'runDt1': train.dep_date,
+                'trnNo1': "{0:0>5}".format(train.train_no),
+                'dptDt1': train.dep_date,
+                'dptTm1': train.dep_time,
+                'dptRsStnCd1': train.dep_stn_code,
+                'dptRsStnCdNm1': train.dep_stn_name,
+                'arvRsStnCd1': train.arr_stn_code,
+                'arvRsStnCdNm1': train.arr_stn_name,
+
+                'MB_CRD_NO': self.membership_number,
+                'ABRD_RS_STN_CD': train.dep_stn_code,
+                'GOFF_RS_STN_CD': train.arr_stn_code,
+                'KR_JSESSIONID': self.kr_session_id,
+                'SR_JSESSIONID': self.sr_session_id,
+            }
+
+            tree = ET.parse(os.path.join(os.getcwd(), 'src/reserve.xml'))
+            response = request(tree.getroot(), url, data)
+
+            if find_col_elem(response, 'strResult').text == 'SUCC':
+                self.reserved = True
+
+                dataset = find_other_elem(response, 'Dataset[@id="dsOutput2"]', 1)
+                rows = find_other_elem(dataset, 'Row', 2)
+                reservations = []
+                for row in rows:
+                    reservation = Reservation(train, row)
+                    reservations.append(reservation)
+
+                return reservations
+
+            else:
+                self.reserved = False
+                return False                

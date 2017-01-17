@@ -25,7 +25,7 @@ def request(root, url, data):
     for k, v in data.items():
         elem = find_col_elem(root, k)
         elem.text = v
-    tree = ET.tostring(root, 'unicode')
+    tree = ET.tostring(root, 'utf-8')
     headers = {'Content-Type': 'application/xml'}
-    response = requests.post(url, data=tree, headers=headers).text
+    response = requests.post(url, data=tree, headers=headers).content
     return ET.fromstring(response)
