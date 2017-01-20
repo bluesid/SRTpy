@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root xmlns="http://www.nexacroplatform.com/platform/dataset">
+	<Dataset id="dsInput1">
+		<ColumnInfo>
+			<Column id="ctlDvCd" type="STRING" size="256"  />
+			<Column id="pageNo" type="STRING" size="256"  />
+			<Column id="telno1" type="STRING" size="256"  />
+			<Column id="telno2" type="STRING" size="256"  />
+			<Column id="telno3" type="STRING" size="256"  />
+			<Column id="custNm" type="STRING" size="256"  />
+			<Column id="nonMbPwd" type="STRING" size="256"  />
+			<Column id="abrdDtFrom" type="STRING" size="256"  />
+			<Column id="abrdDtTo" type="STRING" size="256"  />
+			<Column id="deviceId" type="STRING" size="256"  />
+		</ColumnInfo>
+		<Rows>
+			<Row>
+				<Col id="pageNo">0</Col>
+			</Row>
+		</Rows>
+	</Dataset>
+	<Dataset id="__DS_PARAM_INFO__">
+		<ColumnInfo>
+			<Column id="loginType" type="STRING" size="256"  />
+		</ColumnInfo>
+		<Rows>
+			<Row>
+				<Col id="loginType">2</Col>
+			</Row>
+		</Rows>
+	</Dataset>
+	<Dataset id="__DS_TRANS_INFO__">
+		<ColumnInfo>
+			<Column id="strSvcID" type="STRING" size="256"  />
+			<Column id="strURL" type="STRING" size="256"  />
+			<Column id="strInDatasets" type="STRING" size="256"  />
+			<Column id="strOutDatasets" type="STRING" size="256"  />
+		</ColumnInfo>
+		<Rows>
+			<Row>
+				<Col id="strSvcID">search</Col>
+				<Col id="strURL">atc/selectListAtc14016.do</Col>
+				<Col id="strInDatasets">dsInput1</Col>
+				<Col id="strOutDatasets">dsOutput0&#32;ds_tmpList</Col>
+			</Row>
+		</Rows>
+	</Dataset>
+	<Dataset id="gds_userInfo">
+		<ColumnInfo>
+			<Column id="MB_CRD_NO" type="STRING" size="256"  />
+			<Column id="KR_JSESSIONID" type="STRING" size="256"  />
+			<Column id="SR_JSESSIONID" type="STRING" size="256"  />
+		</ColumnInfo>
+		<Rows>
+			<Row>
+				<Col id="MB_CRD_NO"></Col>
+				<Col id="KR_JSESSIONID"></Col>
+				<Col id="SR_JSESSIONID"></Col>
+			</Row>
+		</Rows>
+	</Dataset>
+	<Dataset id="gds_pageInfo">
+		<ColumnInfo>
+			<Column id="PAGE_LINE" type="STRING" size="256"  />
+			<Column id="CURR_PAGE" type="STRING" size="256"  />
+		</ColumnInfo>
+		<Rows>
+			<Row>
+				<Col id="PAGE_LINE" />
+				<Col id="CURR_PAGE" />
+			</Row>
+		</Rows>
+	</Dataset>
+</Root>
