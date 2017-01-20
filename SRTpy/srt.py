@@ -13,6 +13,7 @@ SRT_LOGOUT = '{}/apb/selectListApb01081.do'.format(SRT_HOST)
 SRT_SEARCH = '{}/ara/selectListAra10007.do'.format(SRT_HOST)
 SRT_RESERVE = '{}/arc/selectListArc05013.do'.format(SRT_HOST)
 SRT_CONFIRM = '{}/atc/selectListAtc14016.do'.format(SRT_HOST)
+SRT_CONFIRM_DETAIL = '{}/ard/selectListArd02017.do'.format(SRT_HOST)
 
 EMAIL_REGEX = re.compile(r"[^@]+@[^@]+\.[^@]+")
 PHONE_NUMBER_REGEX = re.compile(r"(\d{3})-(\d{3,4})-(\d{4})")
@@ -32,8 +33,16 @@ class Srt(object):
 
         if auto_login:
             self.login(srt_id, srt_pwd)
-            self.confirm()
 
+    """
+    def __get_reservation_numbers__(self):
+        return [x.reservation_number for x in self.reservations]
+
+    def __get_reservation_from_reservation_number__(reservation_number):
+        for reservation in self.reservations:
+            if reservation.reservation_number == reservation_number:
+                return reservation
+    """
         
     def login(self, srt_id=None, srt_pwd=None):
         if srt_id is None:
@@ -164,6 +173,12 @@ class Srt(object):
                 self.reserved = False
                 return False                
 
+    def remove_cancelled_reservation(self):
+        for reservation in self.reservations:
+            if not reservation.is_available:
+                self.reservations.pop(reservation)
+
+"""
     def confirm(self):
         if not self.logined:
             return "PLEASE LOG IN"
@@ -183,20 +198,51 @@ class Srt(object):
                 if int(find_col_elem(response, 'rowCnt').text) > 0:
                     self.reserved = True
 
-                    reservation_numbers = find_other_elem(response, 'Col[@id="pnrNo"]', 2)
-                    cancel_dates = find_other_elem(response, 'Col[@id="iseLmtDt"]', 2)
-                    cancel_times = find_other_elem(response, 'Col[@id="iseLmtTm"]', 2)
+                    pnrNos = [x.text for x in find_other_elem(response, 'Col[@id="pnrNo"]', 2)]
+                    jrnySqnos = [x.text for x in find_other_elem(response, 'Col[@id="jrnySqno"]', 2)]
+                    reservation_numbers = self.__get_reservation_numbers__()
 
-                    for reservation in self.reservations:
-                        if reservation.reservation_number in reservation_numbers:
-                            cancel_time = cancel_dates.pop(0) + cancel_times.pop(0)
-                            reservation.cancel_time = datetime.strptime(cancel_time, "%Y%m%d%H%M%S")
+                    for reservation_number in reservation_numbers:
+                        if not reservation_number in pnrNos:
+                            self.__remove_reservation__(reservation_number)
                         else:
-                            cancel_dates.pop(0)
-                            cancel_times.pop(0)
-                            reservation_numbers.remove(reservation.reservation_number)
-                            self.reservations.remove(reservation)
+                            jrnySqnos.pop(pnrNos.index(reservation_number))
+                            pnrNos.pop(reservation_number)
 
+                    for pnrNo in pnrNos:
+                        url = SRT_CONFIRM_DETAIL
+                        data = {
+                            'pnrNo': pnrNo,
+                            'jrnySqno': jrnySqnos[pnrNos.index(pnrNo)],
+                            'MB_CRD_NO': self.membership_number,
+                            'KR_JSESSIONID': self.kr_session_id,
+                            'SR_JSESSIONID': self.sr_session_id,
+                        }
+
+                        tree = ET.parse(os.path.join(os.getcwd(), 'src/confirm_detail.xml'))
+                        response = request(tree.getroot(), url, data)
+
+                        return response
+
+                        if find_col_elem(response, 'strResult').text == 'SUCC':
+                            dataset = find_other_elem(response, 'Dataset[@id="dsOutput1"]', 1)
+                            rows = find_other_elem(dataset, 'Row', 2)
+                            tickets = []
+                            for row in rows:
+                                ticket = Ticket(row)
+                                tickets.append(ticket)
+                            
+                            data = {
+                                'reservation_number': find_col_elem(response, 'pnrNo').text,
+                                'journey_count': find_col_elem(response, 'jrnyCnt').text,
+                                'total_price': find_col_elem(response, 'totRcvdAmt').text,
+                            }
+                            reservation = Reservation(train, tickets, data)
+                            self.reservations.append(reservation)
+
+                        else:
+                            return "Error"
+                        
                 else:
                     self.reserved = False
                     self.reservations = []
@@ -205,3 +251,4 @@ class Srt(object):
 
             else:
                 return "error"
+"""
