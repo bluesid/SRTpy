@@ -1,3 +1,12 @@
+"""
+    SRTpy -- SRT (https://etk.srail.co.kr) wrapper for Python.
+    ==========================================================
+
+    : copyright: (c) 2017 by Heena Kwag.
+    : URL: <http://github.com/dotaitch/SRTpy>
+    : license: BSD, see LICENSE for more details.
+"""
+
 import os, re, abc
 from xml.etree import ElementTree as ET
 from datetime import datetime, timedelta
