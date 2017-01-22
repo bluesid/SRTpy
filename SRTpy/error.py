@@ -10,3 +10,7 @@ class SrtError(Exception):
 class NeedToLoginError(SrtError):
     def __init__(self, message):
         SrtError.__init__(self, message)
+
+class NoResultError(SrtError):
+    def __init__(self, message):
+        SrtError.__init__(self, message)

@@ -13,7 +13,7 @@ def find_col_elem(root, k):
 
 def find_col_elem_text(root, k):
     elem = find_col_elem(root, k)
-    return elem.text if not elem else None
+    return elem.text if elem is not None else None
 
 def find_other_elem(root, k, flag):
     ns = get_namespace(root)

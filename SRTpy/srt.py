@@ -1,6 +1,6 @@
 import os, re
-from datetime import datetime
 from xml.etree import ElementTree as ET
+from datetime import datetime, timedelta
 
 from error import *
 from train import *
@@ -36,11 +36,14 @@ class Srt(object):
             return True
         
         else:
+            code = find_col_elem_text(response, 'msgCd')
             message = find_col_elem_text(response, 'msgTxt')
             description = find_col_elem_text(response, 'MSG')
 
-            if find_col_elem_text(response, 'msgCd') == 'S111':
+            if code == 'S111':
                 raise NeedToLoginError(message)
+            elif code == 'WRG000000':
+                raise NoResultError(message)
             else:
                 raise SrtError(message, description)
 
@@ -73,21 +76,20 @@ class Srt(object):
             self.logined = True
             return True
 
-    def search(self, dep_stn_name, arr_stn_name,
-               dep_date=None, dep_time=None, 
-               srt_only=True, include_no_seat=False, train_type='전체'):
-        if dep_date is None:
-            dep_date = datetime.now().strftime('%Y%m%d')
-            dep_time = datetime.now().strftime('%H%M%S') 
-        elif dep_date is not None and dep_time is None:
-            dep_time = '000000'
-        
+    def search(self, dep, arr, date=None, time=None, 
+               train_type='SRT', include_no_seat=False,):
+        if date is None:
+            date = datetime.now().strftime('%Y%m%d')
+            time = datetime.now().strftime('%H%M%S') 
+        elif date is not None and time is None:
+            time = '000000'
+
         data = {
             'chtnDvCd': '1',
-            'dptDt': dep_date,
-            'dptTm': dep_time,
-            'dptRsStnCd': get_station_code(dep_stn_name), 
-            'arvRsStnCd': get_station_code(arr_stn_name),
+            'dptDt': date,
+            'dptTm': time,
+            'dptRsStnCd': get_station_code(dep), 
+            'arvRsStnCd': get_station_code(arr),
             'stlbTrnClsfCd': get_train_code(train_type),
             'trnGpCd': get_train_group_code(train_type),
             'psgNum': '1',          # need to update
@@ -105,13 +107,29 @@ class Srt(object):
                 train = Train(row)
                 trains.append(train)
 
-            if srt_only:
-                trains = filter(lambda x: x.train_name == 'SRT' in trains)
-
             if not include_no_seat:
-                trains = filter(lambda x: x.has_seat() in trains)
+                trains = list(filter(lambda x: x.has_seat(), trains))
 
             return trains
+
+    def search_allday(self, dep, arr, date=None, time=None, 
+                      train_type='SRT', include_no_seat=False):
+
+        min1 = timedelta(minutes=1)
+        all_trains = []
+        last_time = time
+
+        for attempt in range(15):
+            try:
+                trains = self.search(dep, arr, date, last_time, 
+                                     train_type, include_no_seat)
+                all_trains.extend(trains)
+                t = datetime.strptime(trains[-1].dep_time, "%H%M%S") + min1
+                last_time = t.strftime("%H%M%S")
+            except NoResultError:
+                break
+
+        return all_trains
 
     def reserve(self, train):
         if not self.logined:
@@ -144,10 +162,11 @@ class Srt(object):
                 try:
                     self._result_check(response)
                 except NeedToLoginError:
-                    print("NeedToLoginError")
-                    self.login()
-                    response = request(SRT_RESERVE, data, 
-                                    os.path.join(os.getcwd(), 'src/reserve.xml'))
+                    if self.login():
+                        data['KR_JSESSIONID'] = self.kr_session_id
+                        data['SR_JSESSIONID'] = self.sr_session_id
+                        response = request(SRT_RESERVE, data, 
+                                           os.path.join(os.getcwd(), 'src/reserve.xml'))
                 else:
                     break
 
@@ -169,8 +188,3 @@ class Srt(object):
             self.reservations.append(reservation)
 
             return reservation
-
-    def remove_cancelled_reservation(self):
-        for reservation in self.reservations:
-            if not reservation.is_available:
-                self.reservations.pop(reservation)
