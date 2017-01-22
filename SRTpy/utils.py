@@ -11,6 +11,10 @@ def find_col_elem(root, k):
     tag = './/{{{0}}}Col[@id="{1}"]'.format(ns, k)
     return root.find(tag)
 
+def find_col_elem_text(root, k):
+    elem = find_col_elem(root, k)
+    return elem.text if not elem else None
+
 def find_other_elem(root, k, flag):
     ns = get_namespace(root)
     tag = './/{{{0}}}{1}'.format(ns, k)
@@ -19,7 +23,9 @@ def find_other_elem(root, k, flag):
     else:
         return root.findall(tag)
 
-def request(root, url, data):
+def request(url, data, filepath):
+    tree = ET.parse(filepath)
+    root = tree.getroot()
     ns = get_namespace(root) 
     ET.register_namespace('', ns)
     for k, v in data.items():

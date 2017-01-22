@@ -1,11 +1,12 @@
-from config import *
+import os, re
 from datetime import datetime
 from xml.etree import ElementTree as ET
-import os, re
 
+from error import *
 from train import *
-from tree import *
+from utils import *
 from reservation import *
+from constants import TRAIN_CODE
 
 SRT_HOST = 'https://app.srail.co.kr'
 SRT_LOGIN = '{}/apb/selectListApb01080.do'.format(SRT_HOST)
@@ -27,6 +28,22 @@ class Srt(object):
         if auto_login:
             self.login(srt_id, srt_pwd)
 
+    def __repr__(self):
+        return "[Srt object] {}".format(self.srt_id)
+
+    def _result_check(self, response):
+        if find_col_elem_text(response, 'strResult') == 'SUCC':
+            return True
+        
+        else:
+            message = find_col_elem_text(response, 'msgTxt')
+            description = find_col_elem_text(response, 'MSG')
+
+            if find_col_elem_text(response, 'msgCd') == 'S111':
+                raise NeedToLoginError(message)
+            else:
+                raise SrtError(message, description)
+
     def login(self, srt_id=None, srt_pwd=None):
         if srt_id is None:
             srt_id = self.srt_id
@@ -40,36 +57,31 @@ class Srt(object):
         else:
             login_code = '1'
 
-        url = SRT_LOGIN
         data = {
             'srchDvCd': login_code,
             'srchDvNm': srt_id,
             'hmpgPwdCphd': srt_pwd,
         }
-
-        tree = ET.parse(os.path.join(os.getcwd(), 'src/login.xml'))
-        response = request(tree.getroot(), url, data)
+        response = request(SRT_LOGIN, data, 
+                           os.path.join(os.getcwd(), 'src/login.xml'))
         
-        if find_col_elem(response, 'strResult').text == 'SUCC':
-            self.membership_number = find_col_elem(response, 'MB_CRD_NO').text
-            self.kr_session_id = find_col_elem(response, 'KR_JSESSIONID').text
-            self.sr_session_id = find_col_elem(response, 'SR_JSESSIONID').text
+        if self._result_check(response):
+            self.membership_number = find_col_elem_text(response, 'MB_CRD_NO')
+            self.kr_session_id = find_col_elem_text(response, 'KR_JSESSIONID')
+            self.sr_session_id = find_col_elem_text(response, 'SR_JSESSIONID')
 
             self.logined = True
             return True
-        else:
-            self.logined = False
-            print(find_col_elem(root, 'MSG').text)
-            return False
 
-    def search(self, dep_stn_name, arr_stn_name, dep_date=None, dep_time=None, train_type='전체'):
+    def search(self, dep_stn_name, arr_stn_name,
+               dep_date=None, dep_time=None, 
+               srt_only=True, include_no_seat=False, train_type='전체'):
         if dep_date is None:
             dep_date = datetime.now().strftime('%Y%m%d')
             dep_time = datetime.now().strftime('%H%M%S') 
         elif dep_date is not None and dep_time is None:
             dep_time = '000000'
         
-        url = SRT_SEARCH
         data = {
             'chtnDvCd': '1',
             'dptDt': dep_date,
@@ -82,31 +94,33 @@ class Srt(object):
             'seatAttCd': '015',     # need to update
             'arriveTime': 'N',
         }
+        response = request(SRT_SEARCH, data, 
+                           os.path.join(os.getcwd(), 'src/search_without_login.xml'))
 
-        tree = ET.parse(os.path.join(os.getcwd(), 'src/search_without_login.xml'))
-        response = request(tree.getroot(), url, data)
-
-        if find_col_elem(response, 'strResult').text == 'SUCC':
+        if self._result_check(response):
             dataset = find_other_elem(response, 'Dataset[@id="dsOutput1"]', 1)
             rows = find_other_elem(dataset, 'Row', 2)
             trains = []
             for row in rows:
                 train = Train(row)
                 trains.append(train)
-            return trains
 
-        else:
-            return False
+            if srt_only:
+                trains = filter(lambda x: x.train_name == 'SRT' in trains)
+
+            if not include_no_seat:
+                trains = filter(lambda x: x.has_seat() in trains)
+
+            return trains
 
     def reserve(self, train):
         if not self.logined:
-            return "PLEASE LOG IN"
+            raise Exception("로그인 후 사용하십시오.")
         
         elif train.train_name != 'SRT':
-            return "SRT만 예약 가능합니다."
+            raise Exception("SRT만 예약 가능합니다.")
 
         else:
-            url = SRT_RESERVE 
             data = {
                 'runDt1': train.dep_date,
                 'trnNo1': "{0:0>5}".format(train.train_no),
@@ -123,33 +137,38 @@ class Srt(object):
                 'KR_JSESSIONID': self.kr_session_id,
                 'SR_JSESSIONID': self.sr_session_id,
             }
+            response = request(SRT_RESERVE, data, 
+                               os.path.join(os.getcwd(), 'src/reserve.xml'))
 
-            tree = ET.parse(os.path.join(os.getcwd(), 'src/reserve.xml'))
-            response = request(tree.getroot(), url, data)
+            for attempt in range(2):
+                try:
+                    self._result_check(response)
+                except NeedToLoginError:
+                    print("NeedToLoginError")
+                    self.login()
+                    response = request(SRT_RESERVE, data, 
+                                    os.path.join(os.getcwd(), 'src/reserve.xml'))
+                else:
+                    break
 
-            if find_col_elem(response, 'strResult').text == 'SUCC':
-                self.reserved = True
+            self.reserved = True
 
-                dataset = find_other_elem(response, 'Dataset[@id="dsOutput2"]', 1)
-                rows = find_other_elem(dataset, 'Row', 2)
-                tickets = []
-                for row in rows:
-                    ticket = Ticket(row)
-                    tickets.append(ticket)
-                
-                data = {
-                    'reservation_number': find_col_elem(response, 'pnrNo').text,
-                    'journey_count': find_col_elem(response, 'jrnyCnt').text,
-                    'total_price': find_col_elem(response, 'totRcvdAmt').text,
-                }
-                reservation = Reservation(train, tickets, data)
-                self.reservations.append(reservation)
+            dataset = find_other_elem(response, 'Dataset[@id="dsOutput2"]', 1)
+            rows = find_other_elem(dataset, 'Row', 2)
+            tickets = []
+            for row in rows:
+                ticket = Ticket(row)
+                tickets.append(ticket)
+            
+            data = {
+                'reservation_number': find_col_elem_text(response, 'pnrNo'),
+                'journey_count': find_col_elem_text(response, 'jrnyCnt'),
+                'total_price': find_col_elem_text(response, 'totRcvdAmt'),
+            }
+            reservation = Reservation(train, tickets, data)
+            self.reservations.append(reservation)
 
-                return reservation
-
-            else:
-                self.reserved = False
-                return False                
+            return reservation
 
     def remove_cancelled_reservation(self):
         for reservation in self.reservations:

@@ -1,8 +1,8 @@
-from constants import *
 from datetime import datetime
 from xml.etree import ElementTree as ET
 
-from tree import *
+from utils import *
+from constants import *
     
 def get_train_code(train_type_name):
     for k, v in TRAIN_CODE.items():
@@ -21,23 +21,23 @@ def get_station_code(station_name):
 
 class Train(object):
     def __init__(self, data):
-        self.train_code = find_col_elem(data, 'stlbTrnClsfCd').text
+        self.train_code = find_col_elem_text(data, 'stlbTrnClsfCd')
         self.train_name = TRAIN_CODE.get(self.train_code)
-        self.train_group_code = find_col_elem(data, 'trnGpCd').text
-        self.train_no = find_col_elem(data, 'trnNo').text
+        self.train_group_code = find_col_elem_text(data, 'trnGpCd')
+        self.train_no = find_col_elem_text(data, 'trnNo')
 
-        self.dep_date = find_col_elem(data, 'dptDt').text
-        self.dep_time = find_col_elem(data, 'dptTm').text
-        self.dep_stn_code = find_col_elem(data, 'dptRsStnCd').text
+        self.dep_date = find_col_elem_text(data, 'dptDt')
+        self.dep_time = find_col_elem_text(data, 'dptTm')
+        self.dep_stn_code = find_col_elem_text(data, 'dptRsStnCd')
         self.dep_stn_name = STATION_CODE.get(self.dep_stn_code)
 
-        self.arr_date = find_col_elem(data, 'arvDt').text
-        self.arr_time = find_col_elem(data, 'arvTm').text
-        self.arr_stn_code = find_col_elem(data, 'arvRsStnCd').text
+        self.arr_date = find_col_elem_text(data, 'arvDt')
+        self.arr_time = find_col_elem_text(data, 'arvTm')
+        self.arr_stn_code = find_col_elem_text(data, 'arvRsStnCd')
         self.arr_stn_name = STATION_CODE.get(self.arr_stn_code)
 
-        self.special_seat_str = find_col_elem(data, 'sprmRsvPsbStr').text
-        self.general_seat_str = find_col_elem(data, 'gnrmRsvPsbStr').text
+        self.special_seat_str = find_col_elem_text(data, 'sprmRsvPsbStr')
+        self.general_seat_str = find_col_elem_text(data, 'gnrmRsvPsbStr')
 
     def get_information(self):
         dep_date = "{}월{}일".format(self.dep_date[4:6], self.dep_date[6:])
@@ -71,3 +71,6 @@ class Train(object):
 
     def has_general_seat(self):
         return "예약" in self.general_seat_str
+
+    def has_seat(self):
+        return self.has_special_seat() or self.has_general_seat()

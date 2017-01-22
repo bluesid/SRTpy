@@ -1,18 +1,19 @@
-from tree import *
 from datetime import datetime, timedelta
+
+from utils import *
 from constants import SEAT_OPTIONS
 
 class Ticket(object):
     def __init__(self, data):
-        self.price = find_col_elem(data, 'rcvdAmt').text
-        self.original_price = find_col_elem(data, 'seatPrc').text
-        self.reduced_price = find_col_elem(data, 'dcntAmt').text
+        self.price = find_col_elem_text(data, 'rcvdAmt')
+        self.original_price = find_col_elem_text(data, 'seatPrc')
+        self.reduced_price = find_col_elem_text(data, 'dcntAmt')
 
-        self.seat_type = '일반실' if find_col_elem(data, 'psrmClCd').text == '1' else '특실'
-        self.seat_option = SEAT_OPTIONS.get(find_col_elem(data, 'rqSeatAttCd').text)
+        self.seat_type = '일반실' if find_col_elem_text(data, 'psrmClCd') == '1' else '특실'
+        self.seat_option = SEAT_OPTIONS.get(find_col_elem_text(data, 'rqSeatAttCd'))
 
-        self.car_number = find_col_elem(data, 'scarNo').text
-        self.seat_number = find_col_elem(data, 'seatNo').text
+        self.car_number = find_col_elem_text(data, 'scarNo')
+        self.seat_number = find_col_elem_text(data, 'seatNo')
 
     def __repr__(self):
         repr_str = "{} {}호차 {}, {}원".format(
