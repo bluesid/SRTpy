@@ -18,7 +18,7 @@
 		</ColumnInfo>
 		<Rows>
 			<Row>
-				<Col id="chtnDvCd"></Col>
+				<Col id="chtnDvCd">1</Col>
 				<Col id="dptDt"></Col>
 				<Col id="dptTm"></Col>
 				<Col id="dptRsStnCd"></Col>
@@ -27,7 +27,7 @@
 				<Col id="trnGpCd"></Col>
 				<Col id="psgNum"></Col>
 				<Col id="seatAttCd"></Col>
-				<Col id="arriveTime"></Col>
+				<Col id="arriveTime">N</Col>
 			</Row>
 		</Rows>
 	</Dataset>

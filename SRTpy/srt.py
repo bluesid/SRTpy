@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from error import *
 from train import *
 from utils import *
+from passenger import *
 from reservation import *
 from constants import TRAIN_CODE
 
@@ -77,24 +78,26 @@ class Srt(object):
             return True
 
     def search(self, dep, arr, date=None, time=None, 
-               train_type='SRT', include_no_seat=False,):
+               passengers=None, train_type='SRT', include_no_seat=False):
         if date is None:
             date = datetime.now().strftime('%Y%m%d')
             time = datetime.now().strftime('%H%M%S') 
         elif date is not None and time is None:
             time = '000000'
 
+        if passengers is None:
+            passengers = [Adult()]
+        passengers = Passenger.combine(passengers)
+
         data = {
-            'chtnDvCd': '1',
             'dptDt': date,
             'dptTm': time,
             'dptRsStnCd': get_station_code(dep), 
             'arvRsStnCd': get_station_code(arr),
             'stlbTrnClsfCd': get_train_code(train_type),
             'trnGpCd': get_train_group_code(train_type),
-            'psgNum': '1',          # need to update
+            'psgNum': Passenger.total_count(passengers),
             'seatAttCd': '015',     # need to update
-            'arriveTime': 'N',
         }
         response = request(SRT_SEARCH, data, 
                            os.path.join(os.getcwd(), 'src/search_without_login.xml'))
@@ -113,7 +116,7 @@ class Srt(object):
             return trains
 
     def search_allday(self, dep, arr, date=None, time=None, 
-                      train_type='SRT', include_no_seat=False):
+                      passengers=None, train_type='SRT', include_no_seat=False):
 
         min1 = timedelta(minutes=1)
         all_trains = []
@@ -122,7 +125,7 @@ class Srt(object):
         for attempt in range(15):
             try:
                 trains = self.search(dep, arr, date, last_time, 
-                                     train_type, include_no_seat)
+                                     passengers, train_type, include_no_seat)
                 all_trains.extend(trains)
                 t = datetime.strptime(trains[-1].dep_time, "%H%M%S") + min1
                 last_time = t.strftime("%H%M%S")
@@ -131,7 +134,7 @@ class Srt(object):
 
         return all_trains
 
-    def reserve(self, train):
+    def reserve(self, train, passengers=None):
         if not self.logined:
             raise Exception("로그인 후 사용하십시오.")
         
@@ -139,6 +142,10 @@ class Srt(object):
             raise Exception("SRT만 예약 가능합니다.")
 
         else:
+            if passengers is None:
+                passengers = [Adult()]
+            passengers = Passenger.combine(passengers)
+
             data = {
                 'runDt1': train.dep_date,
                 'trnNo1': "{0:0>5}".format(train.train_no),
@@ -155,20 +162,18 @@ class Srt(object):
                 'KR_JSESSIONID': self.kr_session_id,
                 'SR_JSESSIONID': self.sr_session_id,
             }
+            data.update(Passenger.get_passenger_dict(passengers))
             response = request(SRT_RESERVE, data, 
                                os.path.join(os.getcwd(), 'src/reserve.xml'))
 
-            for attempt in range(2):
-                try:
-                    self._result_check(response)
-                except NeedToLoginError:
-                    if self.login():
-                        data['KR_JSESSIONID'] = self.kr_session_id
-                        data['SR_JSESSIONID'] = self.sr_session_id
-                        response = request(SRT_RESERVE, data, 
-                                           os.path.join(os.getcwd(), 'src/reserve.xml'))
-                else:
-                    break
+            try:
+                self._result_check(response)
+            except NeedToLoginError:
+                if self.login():
+                    data['KR_JSESSIONID'] = self.kr_session_id
+                    data['SR_JSESSIONID'] = self.sr_session_id
+                    response = request(SRT_RESERVE, data, 
+                                       os.path.join(os.getcwd(), 'src/reserve.xml'))
 
             self.reserved = True
 
