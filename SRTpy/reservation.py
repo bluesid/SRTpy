@@ -15,15 +15,31 @@ class Ticket(object):
         self.car_number = find_col_elem_text(data, 'scarNo')
         self.seat_number = find_col_elem_text(data, 'seatNo')
 
+        self.passenger_code = find_col_elem_text(data, 'psgTpDvCd')
+        self.passenger = self._get_passenger_name()
+
     def __repr__(self):
-        repr_str = "{} {}호차 {}, {}원".format(
+        repr_str = "{} {}호차{} ({}) - {}원".format(
             self.seat_type,
             self.car_number,
             self.seat_number,
+            self.passenger,
             self.price,
         )
 
         return repr_str
+
+    def _get_passenger_name(self):
+        if self.passenger_code == '1':
+            return '어른'
+        elif self.passenger_code == '2':
+            return '장애 1~3급'
+        elif self.passenger_code == '3':
+            return '장애 4~6급'
+        elif self.passenger_code == '4':
+            return '경로'
+        elif self.passenger_code == '5':
+            return '어린이'
 
 class Reservation(object):
     def __init__(self, train, tickets, data):
@@ -39,7 +55,7 @@ class Reservation(object):
 
     def __repr__(self):
         train_information = self.train.get_information()
-        repr_str = "{} {}매, {}원".format(
+        repr_str = "{} {}매 - {}원".format(
             train_information, 
             len(self.tickets),
             self.total_price,
