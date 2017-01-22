@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
-		<Parameter id="gs_loginCrdNo">0000000000</Parameter>
 	</Parameters>
 	<Dataset id="dsInput1">
 		<ColumnInfo>
@@ -12,10 +11,9 @@
 		</ColumnInfo>
 		<Rows>
 			<Row>
-				<Col id="srchDvCd">$login_type</Col>
-				<Col id="srchDvNm">$srt_id</Col>
-				<Col id="hmpgPwdCphd">$srt_pwd</Col>
-				<Col id="deviceKey">$_device</Col>
+				<Col id="srchDvCd"></Col>
+				<Col id="srchDvNm"></Col>
+				<Col id="hmpgPwdCphd"></Col>
 			</Row>
 		</Rows>
 	</Dataset>
@@ -39,8 +37,6 @@
 				<Col id="strURL">apb/selectListApb01080.do</Col>
 				<Col id="strInDatasets">dsInput1</Col>
 				<Col id="strOutDatasets">dsOutput0&#32;ds_outCmc</Col>
-				<Col id="strOS">$_device_OS</Col>
-				<Col id="strDeviceInfo">$_device_info</Col>
 			</Row>
 		</Rows>
 	</Dataset>

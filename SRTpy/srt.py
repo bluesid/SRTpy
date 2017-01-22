@@ -17,11 +17,6 @@ EMAIL_REGEX = re.compile(r"[^@]+@[^@]+\.[^@]+")
 PHONE_NUMBER_REGEX = re.compile(r"(\d{3})-(\d{3,4})-(\d{4})")
 
 class Srt(object):
-    
-    _device_key = DEVICE_KEY
-    _device_OS = 'iOS'
-    _device_info = 'iPhone&#32;OS&#32;10.2&#32;iPhone'
-
     def __init__(self, srt_id, srt_pwd, auto_login=True):
         self.srt_id = srt_id
         self.srt_pwd = srt_pwd
@@ -50,9 +45,6 @@ class Srt(object):
             'srchDvCd': login_code,
             'srchDvNm': srt_id,
             'hmpgPwdCphd': srt_pwd,
-            'deviceKey': self._device_key,
-            'strOS': self._device_OS,
-            'strDeviceInfo': self._device_info
         }
 
         tree = ET.parse(os.path.join(os.getcwd(), 'src/login.xml'))
@@ -89,8 +81,6 @@ class Srt(object):
             'psgNum': '1',          # need to update
             'seatAttCd': '015',     # need to update
             'arriveTime': 'N',
-            'strOS': self._device_OS,
-            'strDeviceInfo': self._device_info
         }
 
         tree = ET.parse(os.path.join(os.getcwd(), 'src/search_without_login.xml'))
@@ -103,8 +93,8 @@ class Srt(object):
             for row in rows:
                 train = Train(row)
                 trains.append(train)
-
             return trains
+
         else:
             return False
 

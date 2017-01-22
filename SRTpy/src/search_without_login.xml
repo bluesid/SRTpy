@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Root xmlns="http://www.nexacroplatform.com/platform/dataset">
 	<Parameters>
-		<Parameter id="gs_loginCrdNo">0000000000</Parameter>
 	</Parameters>
 	<Dataset id="dsInput1">
 		<ColumnInfo>
@@ -52,8 +51,6 @@
 				<Col id="strURL">ara/selectListAra10007.do</Col>
 				<Col id="strInDatasets">dsInput1</Col>
 				<Col id="strOutDatasets">dsOutput0&#32;ds_list</Col>
-				<Col id="strOS"></Col>
-				<Col id="strDeviceInfo"></Col>
 			</Row>
 		</Rows>
 	</Dataset>
