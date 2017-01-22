@@ -2,23 +2,8 @@ from datetime import datetime
 from xml.etree import ElementTree as ET
 
 from utils import *
-from constants import *
+from constants import TRAIN_CODE, TRAIN_GROUP_CODE, STATION_CODE
     
-def get_train_code(train_type_name):
-    for k, v in TRAIN_CODE.items():
-        if v == train_type_name:
-            return k
-
-def get_train_group_code(train_type_name):
-    for k, v in TRAIN_GROUP_CODE.items():
-        if train_type_name in v:
-            return k
-
-def get_station_code(station_name):
-    for k, v in STATION_CODE.items():
-        if v == station_name:
-            return k
-
 class Train(object):
     def __init__(self, data):
         self.train_code = find_col_elem_text(data, 'stlbTrnClsfCd')

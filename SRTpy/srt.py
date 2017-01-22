@@ -5,9 +5,9 @@ from datetime import datetime, timedelta
 from error import *
 from train import *
 from utils import *
+from constants import * 
 from passenger import *
 from reservation import *
-from constants import TRAIN_CODE
 
 SRT_HOST = 'https://app.srail.co.kr'
 SRT_LOGIN = '{}/apb/selectListApb01080.do'.format(SRT_HOST)
@@ -78,7 +78,7 @@ class Srt(object):
             return True
 
     def search(self, dep, arr, date=None, time=None, 
-               passengers=None, train_type='SRT', include_no_seat=False):
+               passengers=None, seat_option='일반', train_type='SRT', include_no_seat=False):
         if date is None:
             date = datetime.now().strftime('%Y%m%d')
             time = datetime.now().strftime('%H%M%S') 
@@ -92,12 +92,12 @@ class Srt(object):
         data = {
             'dptDt': date,
             'dptTm': time,
-            'dptRsStnCd': get_station_code(dep), 
-            'arvRsStnCd': get_station_code(arr),
-            'stlbTrnClsfCd': get_train_code(train_type),
-            'trnGpCd': get_train_group_code(train_type),
+            'dptRsStnCd': get_key_by_value(dep, STATION_CODE), 
+            'arvRsStnCd': get_key_by_value(arr, STATION_CODE),
+            'stlbTrnClsfCd': get_key_by_value(train_type, TRAIN_CODE),
+            'trnGpCd': get_key_by_value_list(train_type, TRAIN_GROUP_CODE),
             'psgNum': Passenger.total_count(passengers),
-            'seatAttCd': '015',     # need to update
+            'seatAttCd': get_key_by_value(seat_option, SEAT_OPTIONS),
         }
         response = request(SRT_SEARCH, data, 
                            os.path.join(os.getcwd(), 'src/search_without_login.xml'))
@@ -134,7 +134,8 @@ class Srt(object):
 
         return all_trains
 
-    def reserve(self, train, passengers=None):
+    def reserve(self, train, passengers=None, 
+                seat_option='일반', seat_location='기본', general_seat=True):
         if not self.logined:
             raise Exception("로그인 후 사용하십시오.")
         
@@ -155,6 +156,12 @@ class Srt(object):
                 'dptRsStnCdNm1': train.dep_stn_name,
                 'arvRsStnCd1': train.arr_stn_code,
                 'arvRsStnCdNm1': train.arr_stn_name,
+
+                'locSeatAttCd1': get_key_by_value(seat_location, SEAT_LOCATIONS),
+                'rqSeatAttCd1': get_key_by_value(seat_option, SEAT_OPTIONS),
+                'locSeatAttCd2': get_key_by_value(seat_location, SEAT_LOCATIONS),
+                'rqSeatAttCd2': get_key_by_value(seat_option, SEAT_OPTIONS),
+                'psrmClCd1': '1' if general_seat else '2', 
 
                 'MB_CRD_NO': self.membership_number,
                 'ABRD_RS_STN_CD': train.dep_stn_code,

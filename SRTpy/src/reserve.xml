@@ -131,13 +131,13 @@
                 <Col id="arvRsStnCdNm1"></Col>
                 <Col id="smkSeatAttCd1">000</Col>
                 <Col id="dirSeatAttCd1">009</Col>
-                <Col id="locSeatAttCd1">000</Col>
-                <Col id="rqSeatAttCd1">015</Col>
+                <Col id="locSeatAttCd1"></Col>
+                <Col id="rqSeatAttCd1"></Col>
                 <Col id="etcSeatAttCd1">000</Col>
                 <Col id="smkSeatAttCd2">000</Col>
                 <Col id="dirSeatAttCd2">009</Col>
-                <Col id="locSeatAttCd2">000</Col>
-                <Col id="rqSeatAttCd2">015</Col>
+                <Col id="locSeatAttCd2"></Col>
+                <Col id="rqSeatAttCd2"></Col>
                 <Col id="etcSeatAttCd2">000</Col>
                 <Col id="psgGridcnt"></Col>
                 <Col id="psgTpCd1"></Col>
@@ -149,7 +149,7 @@
                 <Col id="psgTpCd4"></Col>
                 <Col id="psgInfoPerPrnb4">0</Col>
                 <Col id="psgTpCd5"></Col>
-                <Col id="psrmClCd1">1</Col>
+                <Col id="psrmClCd1"></Col>
                 <Col id="psgInfoPerPrnb5">0</Col>
                 <Col id="go_baseDsXml" />
                 <Col id="go_seatDsXml" />

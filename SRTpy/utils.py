@@ -1,5 +1,17 @@
-from xml.etree import ElementTree as ET
 import requests
+from xml.etree import ElementTree as ET
+
+from constants import *
+
+def get_key_by_value(value, data):
+    for k, v in data.items():
+        if v == value:
+            return k
+
+def get_key_by_value_list(value, data):
+    for k, v in data.items():
+        if value in v:
+            return k
 
 def get_namespace(root):
     tag = root.tag
