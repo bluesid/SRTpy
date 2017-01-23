@@ -7,3 +7,6 @@ SRTpy/reservation.py
 SRTpy/srt.py
 SRTpy/train.py
 SRTpy/utils.py
+SRTpy/assets/login.xml
+SRTpy/assets/reserve.xml
+SRTpy/assets/search_without_login.xml

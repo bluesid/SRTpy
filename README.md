@@ -4,11 +4,15 @@
 
 This project was inspired from [korail2](https://github.com/carpedm20/korail2) of [carpedm20](https://carpedm20.github.io).
 
+## Requirements
+- Python3+
+- requests
+
 ## Installing
 
 To install SRTpy, simply:
 
-    $ pip install srtpy
+    $ pip install SRTpy 
 
 Or, you can also install manually:
 
@@ -23,7 +27,7 @@ Or, you can also install manually:
 First, you need to create SRT object.
 
 ```python
->>> from SRTpy import *
+>>> from SRTpy import Srt, Passenger, Adult, Child, Senior, Disability1_3, Disability4_6
 >>> srt = Srt("12345678", YOUR_PASSWORD) # with membership number
 >>> srt = Srt("dotaitch@gmail.com", YOUR_PASSWORD) # with email
 >>> srt = Srt("010-xxxx-yyyy", YOUR_PASSWORD) # with phone number

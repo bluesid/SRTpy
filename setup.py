@@ -31,6 +31,7 @@ with open(os.path.join('SRTpy', '__init__.py'), encoding='utf-8') as f:
 setup(
     name='SRTpy',
     packages=['SRTpy'],
+    package_data={'SRTpy': ['assets/*.xml']},
     version=version,
     description='SRT (https://etk.srail.co.kr) wrapper for Python',
     license=license,
@@ -38,7 +39,6 @@ setup(
     author_email=email,
     url=url,
     keywords=['SRT', 'srt', 'SRTpy', 'srtpy'],
-    package_data={'assets': ['*.xml']},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
