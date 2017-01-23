@@ -10,7 +10,7 @@
 import requests
 from xml.etree import ElementTree as ET
 
-from constants import *
+from .constants import *
 
 def get_key_by_value(value, data):
     for k, v in data.items():

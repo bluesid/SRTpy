@@ -38,6 +38,7 @@ setup(
     author_email=email,
     url=url,
     keywords=['SRT', 'srt', 'SRTpy', 'srtpy'],
+    package_data={'assets': ['*.xml']},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',

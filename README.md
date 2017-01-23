@@ -23,7 +23,7 @@ Or, you can also install manually:
 First, you need to create SRT object.
 
 ```python
->>> from srt import *
+>>> from SRTpy import *
 >>> srt = Srt("12345678", YOUR_PASSWORD) # with membership number
 >>> srt = Srt("dotaitch@gmail.com", YOUR_PASSWORD) # with email
 >>> srt = Srt("010-xxxx-yyyy", YOUR_PASSWORD) # with phone number

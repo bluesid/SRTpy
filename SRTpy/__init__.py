@@ -7,13 +7,13 @@
     : license: BSD, see LICENSE for more details.
 """
 
-from srt import Srt, Passenger, Adult, Child, Senior, Disability1_3, Disability4_6
-from train import Train
-from reservation import Ticket, Reservation
-from error import SrtError, NeedToLoginError, NoResultError
+from .srt import Srt, Passenger, Adult, Child, Senior, Disability1_3, Disability4_6
+from .train import Train
+from .reservation import Ticket, Reservation
+from .error import SrtError, NeedToLoginError, NoResultError
 
 __copyright__ = 'Copyright 2017 by Heena Kwag'
-__version__ = '0.0.1'
+__version__ = '0.0.3'
 __license__ = 'BSD License'
 __author__ = 'Heena Kwag'
 __author_email__ = 'dotaitch@gmail.com'

@@ -9,8 +9,8 @@
 
 from datetime import datetime, timedelta
 
-from utils import *
-from constants import SEAT_OPTIONS
+from .utils import *
+from .constants import SEAT_OPTIONS
 
 class Ticket(object):
     def __init__(self, data):
@@ -24,7 +24,7 @@ class Ticket(object):
         self.car_number = find_col_elem_text(data, 'scarNo')
         self.seat_number = find_col_elem_text(data, 'seatNo')
 
-        self.passenger_code = find_col_elem_text(data, 'psgTpDvCd')
+        self.passenger_code = find_col_elem_text(data, 'psgTpCd')
         self.passenger = self._get_passenger_name()
 
     def __repr__(self):

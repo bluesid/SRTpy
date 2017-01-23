@@ -10,8 +10,8 @@
 from datetime import datetime
 from xml.etree import ElementTree as ET
 
-from utils import *
-from constants import TRAIN_CODE, TRAIN_GROUP_CODE, STATION_CODE
+from .utils import *
+from .constants import TRAIN_CODE, TRAIN_GROUP_CODE, STATION_CODE
     
 class Train(object):
     def __init__(self, data):

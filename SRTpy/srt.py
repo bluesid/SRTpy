@@ -11,12 +11,11 @@ import os, re, abc
 from xml.etree import ElementTree as ET
 from datetime import datetime, timedelta
 
-from error import *
-from train import *
-from utils import *
-from constants import * 
-from passenger import *
-from reservation import *
+from .error import *
+from .train import *
+from .utils import *
+from .constants import * 
+from .reservation import *
 
 SRT_HOST = 'https://app.srail.co.kr'
 SRT_LOGIN = '{}/apb/selectListApb01080.do'.format(SRT_HOST)
@@ -26,6 +25,8 @@ SRT_RESERVE = '{}/arc/selectListArc05013.do'.format(SRT_HOST)
 
 EMAIL_REGEX = re.compile(r"[^@]+@[^@]+\.[^@]+")
 PHONE_NUMBER_REGEX = re.compile(r"(\d{3})-(\d{3,4})-(\d{4})")
+
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 class Srt(object):
     def __init__(self, srt_id, srt_pwd, auto_login=True):
@@ -76,7 +77,7 @@ class Srt(object):
             'hmpgPwdCphd': srt_pwd,
         }
         response = request(SRT_LOGIN, data, 
-                           os.path.join(os.getcwd(), 'src/login.xml'))
+                           os.path.join(DIR_PATH, 'assets/login.xml'))
         
         if self._result_check(response):
             self.membership_number = find_col_elem_text(response, 'MB_CRD_NO')
@@ -109,7 +110,7 @@ class Srt(object):
             'seatAttCd': get_key_by_value(seat_option, SEAT_OPTIONS),
         }
         response = request(SRT_SEARCH, data, 
-                           os.path.join(os.getcwd(), 'src/search_without_login.xml'))
+                           os.path.join(DIR_PATH, 'assets/search_without_login.xml'))
 
         if self._result_check(response):
             dataset = find_other_elem(response, 'Dataset[@id="dsOutput1"]', 1)
@@ -180,7 +181,7 @@ class Srt(object):
             }
             data.update(Passenger.get_passenger_dict(passengers))
             response = request(SRT_RESERVE, data, 
-                               os.path.join(os.getcwd(), 'src/reserve.xml'))
+                               os.path.join(DIR_PATH, 'assets/reserve.xml'))
 
             try:
                 self._result_check(response)
@@ -189,7 +190,7 @@ class Srt(object):
                     data['KR_JSESSIONID'] = self.kr_session_id
                     data['SR_JSESSIONID'] = self.sr_session_id
                     response = request(SRT_RESERVE, data, 
-                                       os.path.join(os.getcwd(), 'src/reserve.xml'))
+                                       os.path.join(DIR_PATH, 'assets/reserve.xml'))
 
             self.reserved = True
 
