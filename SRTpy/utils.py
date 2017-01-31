@@ -7,6 +7,7 @@
     : license: BSD, see LICENSE for more details.
 """
 
+import random
 import requests
 from xml.etree import ElementTree as ET
 
@@ -53,6 +54,10 @@ def request(url, data, filepath):
         elem = find_col_elem(root, k)
         elem.text = v
     tree = ET.tostring(root, 'utf-8')
-    headers = {'Content-Type': 'application/xml'}
+    user_agent = random.choice(USER_AGENTS)
+    headers = {
+        'Content-Type': 'application/xml',
+        'User-Agent': user_agent,
+    }
     response = requests.post(url, data=tree, headers=headers).content
     return ET.fromstring(response)
