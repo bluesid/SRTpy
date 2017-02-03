@@ -13,7 +13,7 @@ from .reservation import Ticket, Reservation
 from .error import SrtError, NeedToLoginError, NoResultError
 
 __copyright__ = 'Copyright 2017 by Heena Kwag'
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 __license__ = 'BSD License'
 __author__ = 'Heena Kwag'
 __author_email__ = 'dotaitch@gmail.com'

@@ -5,20 +5,19 @@
 This project was inspired from [korail2](https://github.com/carpedm20/korail2) of [carpedm20](https://carpedm20.github.io).
 
 ## Requirements
-- Python3+
-- requests
+- *Python3+*
 
-## Installing
+## Installation
 
 To install SRTpy, simply:
 
-    $ pip install SRTpy 
+    $ pip3 install SRTpy 
 
 Or, you can also install manually:
 
     $ git clone https://github.com/dotaitch/SRTpy.git
     $ cd SRTpy
-    $ python setup.py install
+    $ python3 setup.py install
 
 ## Usage
 
@@ -96,7 +95,7 @@ When you want to see sold-out trains and others.
 
 #### 2-1. About `passengers` argument
 
-`passengers` is a list(or tuple) of Passeger Objects.
+`passengers` is a list(or tuple) of Passenger Objects.
 By this, you can search for multiple passengers.
 There are 5 types of Passengers: Adult, Child, Senior, Disability1_3, and Disability4_6.
 
@@ -183,7 +182,7 @@ It is a list of Reservation objects.
 
 You can see when the reservation is cancelled. 
 
-```
+```python
 >>> srt.reservations[0].cancel_time
 datetime.datetime(2017, 1, 23, 5, 53, 51, 310966)
 ```
@@ -191,7 +190,7 @@ datetime.datetime(2017, 1, 23, 5, 53, 51, 310966)
 Reservation object has `tickets` variable.
 It is a list of Ticket objects.
 
-```
+```python
 >>> reservation.tickets
 [일반실 2호차4C (어른) - 46100원,
  일반실 2호차4D (어른) - 46100원,
