@@ -10,7 +10,7 @@
 """
 
 import os
-from distutils.core import setup
+from setuptools import setup
 
 version = license = author = email = url = None
 with open(os.path.join('SRTpy', '__init__.py'), encoding='utf-8') as f:
@@ -60,5 +60,6 @@ setup(
     ],
     install_requires=[
         'requests',
+        'heconvert',
     ],
 )

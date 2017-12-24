@@ -51,8 +51,8 @@ You can search train schedules `search` and `search_allday` methods.
 
 `search` and `search_allday` methods take these arguments:
 
-- dep_stn_name : A departure station in Korean  ex) '수서'
-- arr_stn_name : A arrival station in Korean  ex) '울산'
+- dep : A departure station  ex) '수서', 'tntj'
+- arr : A arrival station  ex) '울산', 'dnftks'
 - (optional) date : A departure date in `yyyyMMdd` format  ex) '20170131'
 - (optional) time : A departure time in `hhmmss` format  ex) '133000'
 - (optional) passengers : List of Passenger Objects. None means 1 Adult. 
@@ -69,8 +69,8 @@ You can search train schedules `search` and `search_allday` methods.
 Below is a sample usage of `search`:
 
 ```python
->>> dep = '수서'
->>> arr = '울산'
+>>> dep = 'tntj' # 수서 
+>>> arr = 'dnftks' # 울산
 >>> date = '20170131'
 >>> time = '133000'
 >>> trains = srt.search(dep, arr, date, time)
@@ -93,7 +93,28 @@ When you want to see sold-out trains and others.
  [KTX-산천 139] 01월31일 동대구(16:14)->울산(16:43) 특실 예약가능 / 일반실 예약가능]
 ```
 
-#### 2-1. About `passengers` argument
+#### 2-1. About `dep` and `arr` arguments
+
+`dep` and `arr` are the names of train stations.
+*You do not need to press Kor/Eng key to write train station's name in Korean.*
+If the name is in English, then convert it to Korean.
+
+```python
+>>> srt.search("tntj", "dnftks") # 수서, 울산
+[[SRT 301] 12월25일 수서(05:30)->울산(07:41) 특실 예약가능 / 일반실 예약가능, 
+ [SRT 305] 12월25일 수서(06:30)->울산(08:41) 특실 예약가능 / 일반실 예약가능, 
+ ...,
+ [SRT 331] 12월25일 수서(12:30)->울산(14:36) 특실 예약가능 / 일반실 예약가능]
+ 
+>>> srt.search("dnftks", "ehdeorn") # 울산, 동대구
+[[SRT 302] 12월25일 울산(05:23)->동대구(05:48) 특실 예약가능 / 일반실 예약가능, 
+ [SRT 306] 12월25일 울산(06:23)->동대구(06:48) 특실 예약가능 / 일반실 예약가능, 
+ ...,
+ [SRT 336] 12월25일 울산(13:53)->동대구(14:18) 특실 예약가능 / 일반실 예약가능]
+```
+
+
+#### 2-2. About `passengers` argument
 
 `passengers` is a list(or tuple) of Passenger Objects.
 By this, you can search for multiple passengers.
@@ -202,7 +223,6 @@ It is a list of Ticket objects.
 
 0. Support python2
 1. Cancel function
-2. Constants in English
 
 # License
 
