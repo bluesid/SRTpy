@@ -91,9 +91,9 @@ class Srt(object):
     def search(self, dep, arr, date=None, time=None, 
                passengers=None, seat_option='일반', train_type='SRT', include_no_seat=False):
 
-        if dep.isalpha():
+        if re.match(r'^[A-Za-z]+$', dep):
             dep = e2h(dep)
-        if arr.isalpha():
+        if re.match(r'^[A-Za-z]+$', arr):
             arr = e2h(arr)
 
         if date is None:
