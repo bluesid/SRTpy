@@ -132,8 +132,8 @@ class Srt(object):
 
             return trains
 
-    def search_allday(self, dep, arr, date=None, time=None, 
-                      passengers=None, train_type='SRT', include_no_seat=False):
+    def search_allday(self, dep, arr, date=None, time=None,
+                      passengers=None, seat_option='일반', train_type='SRT', include_no_seat=False):
 
         min1 = timedelta(minutes=1)
         all_trains = []
@@ -141,8 +141,8 @@ class Srt(object):
 
         for attempt in range(15):
             try:
-                trains = self.search(dep, arr, date, last_time, 
-                                     passengers, train_type, include_no_seat)
+                trains = self.search(dep, arr, date, last_time,
+                                     passengers, seat_option, train_type, include_no_seat)
                 all_trains.extend(trains)
                 t = datetime.strptime(trains[-1].dep_time, "%H%M%S") + min1
                 last_time = t.strftime("%H%M%S")
