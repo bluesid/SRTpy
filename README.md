@@ -221,7 +221,6 @@ It is a list of Ticket objects.
 
 # To-do
 
-0. Support python2
 1. Cancel function
 
 # License

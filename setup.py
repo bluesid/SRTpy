@@ -28,12 +28,17 @@ with open(os.path.join('SRTpy', '__init__.py'), encoding='utf-8') as f:
         elif None not in (version, license, author, email, url):
             break
 
+with open('README.md') as f:
+    long_description = f.read()
+
 setup(
     name='SRTpy',
     packages=['SRTpy'],
     package_data={'SRTpy': ['assets/*.xml']},
     version=version,
     description='SRT (https://etk.srail.co.kr) wrapper for Python',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     license=license,
     author=author,
     author_email=email,
